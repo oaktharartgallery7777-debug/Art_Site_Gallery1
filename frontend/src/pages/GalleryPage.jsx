@@ -25,7 +25,11 @@ export default function GalleryPage() {
   }, [page, f]);
 
   useEffect(() => {
-    api.filterOptions().then(setOpts).catch(() => {});
+    api.filterOptions().then((o) => {
+      setOpts(o);
+      // Auto-clear a stale/invalid artist filter (e.g. old ?artist=10 links).
+      setF((prev) => (prev.artist && !o.artists.includes(prev.artist) ? { ...prev, artist: "" } : prev));
+    }).catch(() => {});
     api.paintings({ page: 1, per_page: 20 }).then((d) => {
       const withImg = (d.items || []).find((r) => r.image_url);
       if (withImg) setFeatured(withImg);
