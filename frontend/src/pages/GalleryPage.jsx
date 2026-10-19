@@ -20,7 +20,7 @@ export default function GalleryPage() {
 
   useEffect(() => {
     setData(null);
-    const params = { page, per_page: 12, ...Object.fromEntries(Object.entries(f).filter(([_, v]) => v)) };
+    const params = { page, per_page: 15, ...Object.fromEntries(Object.entries(f).filter(([_, v]) => v)) };
     api.paintings(params).then(setData).catch(() => setData({ items: [], total: 0, pages: 0 }));
   }, [page, f]);
 
