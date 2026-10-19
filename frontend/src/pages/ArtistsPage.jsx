@@ -6,12 +6,7 @@ export default function ArtistsPage() {
   const [artists, setArtists] = useState(null);
 
   useEffect(() => {
-    api.analytics().then((d) => {
-      const list = Object.entries(d.by_artist || {})
-        .map(([name, count]) => ({ name, count }))
-        .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
-      setArtists(list);
-    }).catch(() => setArtists([]));
+    api.artists().then(setArtists).catch(() => setArtists([]));
   }, []);
 
   return (

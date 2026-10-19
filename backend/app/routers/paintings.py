@@ -109,6 +109,18 @@ def filter_options():
     }
 
 
+@router.get("/artists")
+def list_artists():
+    """Public: every artist with their artwork count, sorted by count desc."""
+    from collections import Counter
+    rows = get_supabase().table("paintings").select("artist").execute().data or []
+    counts = Counter(r.get("artist") or "Unknown" for r in rows)
+    return [
+        {"name": name, "count": count}
+        for name, count in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))
+    ]
+
+
 @router.get("/{painting_id}")
 def get_painting(painting_id: str):
     res = get_supabase().table("paintings").select("*").eq("id", painting_id).execute()
