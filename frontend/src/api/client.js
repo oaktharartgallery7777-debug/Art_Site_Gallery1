@@ -65,6 +65,12 @@ export const api = {
   painting: (id) => client.get(`/api/paintings/${encodeURIComponent(id)}`),
   filterOptions: () => client.get("/api/paintings/filter-options"),
   artists: () => client.get("/api/paintings/artists"),
+  uploadArtistPhoto: (name, file) => {
+    const fd = new FormData();
+    fd.append("image", file);
+    return client.postForm(`/api/paintings/artists/${encodeURIComponent(name)}/photo`, fd);
+  },
+  deleteArtistPhoto: (name) => client.del(`/api/paintings/artists/${encodeURIComponent(name)}/photo`),
   // auth
   login: (password) => client.post("/api/auth/login", { password }),
   logout: () => client.post("/api/auth/logout", {}),

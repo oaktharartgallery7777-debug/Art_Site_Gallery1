@@ -23,13 +23,13 @@ def _ensure_configured() -> None:
     _configured = True
 
 
-def upload_image(file_bytes: bytes, file_name: str) -> str | None:
+def upload_image(file_bytes: bytes, file_name: str, folder: str = "art_gallery") -> str | None:
     """Upload image bytes; returns the secure URL, or None on failure."""
     _ensure_configured()
     try:
         result = cloudinary.uploader.upload(
             file_bytes,
-            public_id=f"art_gallery/{file_name.rsplit('.', 1)[0]}",
+            public_id=f"{folder}/{file_name.rsplit('.', 1)[0]}",
             resource_type="image",
         )
         return result.get("secure_url")

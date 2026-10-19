@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, Form
@@ -16,6 +17,11 @@ router = APIRouter(prefix="/api/paintings", tags=["paintings"])
 ITEMS_PER_PAGE = 9
 MAX_FILE_SIZE = 20 * 1024 * 1024
 ALLOWED_FORMATS = {"JPEG", "PNG", "WEBP"}
+
+
+def _slugify(name: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
+    return slug or "artist"
 
 
 class PaintingCreate(BaseModel):
@@ -111,14 +117,58 @@ def filter_options():
 
 @router.get("/artists")
 def list_artists():
-    """Public: every artist with their artwork count, sorted by count desc."""
+    """Public: every artist with artwork count + optional photo, sorted by count desc."""
     from collections import Counter
-    rows = get_supabase().table("paintings").select("artist").execute().data or []
+    sb = get_supabase()
+    rows = sb.table("paintings").select("artist").execute().data or []
     counts = Counter(r.get("artist") or "Unknown" for r in rows)
+    try:
+        photos = {r["name"]: r.get("photo_url")
+                  for r in sb.table("artists").select("name,photo_url").execute().data or []}
+    except Exception:
+        photos = {}  # artists table not created yet — photos simply absent
     return [
-        {"name": name, "count": count}
+        {"name": name, "count": count, "photo_url": photos.get(name)}
         for name, count in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))
     ]
+
+
+@router.post("/artists/{artist_name}/photo", dependencies=[Depends(require_admin)])
+def upload_artist_photo(artist_name: str, image: UploadFile = File(...)):
+    """Admin: upload/replace an artist's profile photo (Cloudinary + artists table)."""
+    sb = get_supabase()
+    content = image.file.read()
+    if len(content) > MAX_FILE_SIZE:
+        raise HTTPException(400, "Image exceeds 20 MB.")
+    new_url = cloudinary_service.upload_image(
+        content, f"{_slugify(artist_name)}.jpg", folder="artist_photos")
+    if not new_url:
+        raise HTTPException(500, "Image upload failed.")
+    try:
+        existing = sb.table("artists").select("photo_url").eq("name", artist_name).execute().data
+        old_url = (existing[0].get("photo_url") if existing else "") or ""
+        sb.table("artists").upsert({"name": artist_name, "photo_url": new_url}).execute()
+    except Exception:
+        cloudinary_service.delete_image(new_url)
+        raise HTTPException(500, "artists table missing — run the SQL setup first.")
+    if old_url and old_url != new_url:
+        cloudinary_service.delete_image(old_url)
+    return {"ok": True, "photo_url": new_url}
+
+
+@router.delete("/artists/{artist_name}/photo", dependencies=[Depends(require_admin)])
+def delete_artist_photo(artist_name: str):
+    """Admin: remove an artist's profile photo."""
+    sb = get_supabase()
+    try:
+        existing = sb.table("artists").select("photo_url").eq("name", artist_name).execute().data
+    except Exception:
+        raise HTTPException(500, "artists table missing — run the SQL setup first.")
+    old_url = (existing[0].get("photo_url") if existing else "") or ""
+    sb.table("artists").update({"photo_url": None}).eq("name", artist_name).execute()
+    if old_url:
+        cloudinary_service.delete_image(old_url)
+    return {"ok": True}
 
 
 @router.get("/{painting_id}")
