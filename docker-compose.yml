@@ -1,0 +1,16 @@
+# Art Gallery — runs on the same $12 server as the KPI app.
+# Caddy (kpi-app) reverse-proxies to this container; see Caddyfile snippet in README.
+services:
+  gallery:
+    build: .
+    container_name: art-gallery
+    restart: always
+    env_file: .env
+    expose:
+      - "8000"
+    mem_limit: 512m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

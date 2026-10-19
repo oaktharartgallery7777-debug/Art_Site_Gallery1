@@ -1,0 +1,12 @@
+fastapi>=0.115.6
+uvicorn[standard]>=0.30.0
+pyjwt>=2.8.0
+passlib[bcrypt]>=1.7.4
+supabase>=2.0.0
+cloudinary>=1.36.0
+qrcode[pil]>=7.4.0
+pillow>=10.0.0
+fpdf2>=2.8.0
+pandas>=2.0.0
+python-multipart>=0.0.18
+python-dotenv>=1.0.1
