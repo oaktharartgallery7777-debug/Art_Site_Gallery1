@@ -36,7 +36,7 @@ export default function GalleryPage() {
     }).catch(() => {});
   }, []);
 
-  const totalPages = data?.pages || 0;
+  const totalPages = data?.total_pages || 0;
 
   return (
     <>
