@@ -72,7 +72,18 @@ export default function Layout({ children }) {
             <Link to="/admin/login" className="btn btn-ghost" style={{ padding: "7px 14px", fontSize: "0.78rem" }}>Login</Link>
           )}
         </div>
-        <main className="main">{children}</main>
+        <main className="main">
+          {children}
+          <footer className="footer">
+            <div className="f-brand">
+              <img src="/logo.webp" alt="ABC Art Gallery" />
+              <b>ABC Art Gallery</b>
+            </div>
+            <div className="f-note">
+              A private collection of Myanmar fine art · © {new Date().getFullYear()} ABC Art Gallery
+            </div>
+          </footer>
+        </main>
       </div>
     </div>
   );

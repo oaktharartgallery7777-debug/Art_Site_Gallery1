@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/client";
+import { cloudinaryThumb } from "../utils/images";
 import ArtworkCard from "../components/ArtworkCard";
 
 export default function GalleryPage() {
@@ -11,9 +12,15 @@ export default function GalleryPage() {
   const [medium, setMedium] = useState("");
   const [page, setPage] = useState(1);
   const [stats, setStats] = useState(null);
+  const [featured, setFeatured] = useState(null);
 
   useEffect(() => {
     api.filterOptions().then(setOpts).catch(() => {});
+    // Featured artwork for the hero banner (a piece with an image).
+    api.paintings({ page: 1, per_page: 20 }).then((d) => {
+      const withImg = (d.items || []).find((r) => r.image_url);
+      if (withImg) setFeatured(withImg);
+    }).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -35,9 +42,28 @@ export default function GalleryPage() {
 
   return (
     <>
+      <div className="hero">
+        <div className="hero-bg">
+          {featured && <img src={cloudinaryThumb(featured.image_url, 1600)} alt="" />}
+        </div>
+        <div className="hero-shade" />
+        <div className="hero-content">
+          <span className="hero-eyebrow">Private Collection</span>
+          <h1>ABC Art Gallery</h1>
+          <p>
+            A curated collection of Myanmar fine art — {opts.artists.length > 0 ? `${opts.artists.length} artists` : "dozens of artists"} and{" "}
+            {data ? `${data.total} works` : "hundreds of works"}, preserved and catalogued in one place.
+          </p>
+          <div className="hero-stats">
+            <div className="hs"><b>{data ? data.total : "—"}</b><span>Artworks</span></div>
+            <div className="hs"><b>{opts.artists.length || "—"}</b><span>Artists</span></div>
+            <div className="hs"><b>{opts.mediums.length || "—"}</b><span>Mediums</span></div>
+          </div>
+        </div>
+      </div>
+
       <div className="page-head">
-        <h1>Gallery Explorer</h1>
-        <p>Browse the collection — {opts.artists.length} artists · {data ? data.total : "…"} artworks</p>
+        <h1 style={{ fontSize: "1.9rem" }}>Browse the Collection</h1>
         <div className="gold-rule" />
       </div>
 

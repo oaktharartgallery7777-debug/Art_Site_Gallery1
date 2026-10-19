@@ -10,11 +10,19 @@ export default function ArtworkPage() {
   const id = pathId || searchParams.get("id");
   const [row, setRow] = useState(null);
   const [missing, setMissing] = useState(false);
+  const [lightbox, setLightbox] = useState(false);
 
   useEffect(() => {
     if (!id) { setMissing(true); return; }
     api.painting(id).then(setRow).catch(() => setMissing(true));
   }, [id]);
+
+  useEffect(() => {
+    if (!lightbox) return;
+    function onKey(e) { if (e.key === "Escape") setLightbox(false); }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [lightbox]);
 
   if (missing) {
     return (
@@ -30,12 +38,11 @@ export default function ArtworkPage() {
   if (!row) return <div className="spinner" />;
 
   const kv = [
-    ["Artwork ID", row.id],
+    ["Artist", row.artist || "Unknown"],
     ["Medium", row.medium || "—"],
     ["Dimensions", dimText(row)],
-    ["Year Created", row.draw_year || "—"],
-    ["Year Acquired", acquiredText(row)],
-    ["Price", row.price || "—"],
+    ["Year", row.draw_year || "—"],
+    ["Acquired", acquiredText(row)],
     ["Location", row.location ? `📍 ${row.location}` : "—"],
   ];
 
@@ -43,24 +50,43 @@ export default function ArtworkPage() {
     <>
       <Link to="/" className="btn btn-ghost" style={{ marginBottom: 24 }}>← Back to Gallery</Link>
       <div className="detail">
-        <div className="detail-img">
-          {row.image_url
-            ? <img src={cloudinaryThumb(row.image_url, 1200)} alt={row.title || row.id} />
-            : <div className="empty"><div className="big">🖼️</div></div>}
+        <div>
+          <div className="detail-img zoomable" onClick={() => row.image_url && setLightbox(true)}
+            title={row.image_url ? "Click to enlarge" : ""}>
+            {row.image_url
+              ? <img src={cloudinaryThumb(row.image_url, 1200)} alt={row.title || row.id} />
+              : <div className="empty"><div className="big">🖼️</div></div>}
+          </div>
+          {row.image_url && (
+            <p style={{ color: "var(--text-faint)", fontSize: "0.78rem", marginTop: 10, textAlign: "center" }}>
+              🔍 Click the image to view fullscreen
+            </p>
+          )}
         </div>
-        <div className="detail-info">
-          <span className="id-badge" style={{ position: "static" }}>ID · {row.id}</span>
-          <h1 style={{ marginTop: 14 }}>{row.title || "Unknown"}</h1>
-          <p className="artist">by {row.artist || "Unknown Artist"}</p>
-          <dl className="kv">
-            {kv.map(([k, v]) => (
-              <div key={k} style={{ display: "contents" }}>
-                <dt>{k}</dt><dd>{v}</dd>
-              </div>
-            ))}
-          </dl>
+        <div>
+          <div className="plaque">
+            <h2>{row.title || "Unknown"}</h2>
+            <p className="p-artist">{row.artist || "Unknown Artist"}</p>
+            <dl>
+              {kv.map(([k, v]) => (
+                <div key={k} style={{ display: "contents" }}>
+                  <dt>{k}</dt><dd>{v}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+          <p style={{ color: "var(--text-faint)", fontSize: "0.82rem", marginTop: 18, lineHeight: 1.6 }}>
+            ID · {row.id} — part of the ABC Art Gallery private collection.
+          </p>
         </div>
       </div>
+
+      {lightbox && row.image_url && (
+        <div className="lightbox" onClick={() => setLightbox(false)}>
+          <span className="close-hint">ESC / CLICK TO CLOSE</span>
+          <img src={row.image_url} alt={row.title || row.id} onClick={(e) => e.stopPropagation()} />
+        </div>
+      )}
     </>
   );
 }

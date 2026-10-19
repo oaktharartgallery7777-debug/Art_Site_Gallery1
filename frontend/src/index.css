@@ -217,3 +217,75 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
 .qr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 18px; }
 .qr-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; text-align: center; }
 .qr-card img { width: 100%; border-radius: 8px; background: #fff; padding: 8px; }
+
+/* ---------- hero ---------- */
+.hero {
+  position: relative; border-radius: 20px; overflow: hidden;
+  min-height: 340px; display: flex; align-items: flex-end;
+  border: 1px solid var(--border); margin-bottom: 34px;
+  background: var(--bg-soft);
+}
+.hero-bg { position: absolute; inset: 0; }
+.hero-bg img { width: 100%; height: 100%; object-fit: cover; }
+.hero-shade {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(8,8,11,0.94) 0%, rgba(8,8,11,0.55) 45%, rgba(8,8,11,0.25) 100%);
+}
+.hero-content { position: relative; padding: 40px 44px; max-width: 720px; }
+.hero-eyebrow {
+  display: inline-block; font-size: 0.68rem; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--gold-soft); border: 1px solid rgba(201,162,39,0.45);
+  padding: 6px 14px; border-radius: 999px; margin-bottom: 18px;
+  background: rgba(10,10,14,0.5); backdrop-filter: blur(6px);
+}
+.hero h1 { margin: 0 0 10px; font-size: 3rem; font-weight: 600; line-height: 1.05; }
+.hero p { margin: 0 0 22px; color: #cfc9bd; font-size: 1rem; line-height: 1.6; max-width: 560px; }
+.hero-stats { display: flex; gap: 34px; }
+.hero-stats .hs b { display: block; font-size: 1.5rem; color: var(--gold-soft); }
+.hero-stats .hs span { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); }
+@media (max-width: 700px) { .hero h1 { font-size: 2rem; } .hero-content { padding: 28px 24px; } .hero-stats { gap: 20px; } }
+
+/* ---------- lightbox ---------- */
+.lightbox {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(5,5,8,0.94); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  cursor: zoom-out; animation: fadeIn 0.2s;
+}
+.lightbox img { max-width: 92vw; max-height: 90vh; border-radius: 8px; box-shadow: 0 30px 80px rgba(0,0,0,0.6); }
+.lightbox .close-hint {
+  position: absolute; top: 22px; right: 28px; color: var(--text-dim);
+  font-size: 0.8rem; letter-spacing: 0.1em;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.zoomable { cursor: zoom-in; }
+
+/* ---------- plaque (museum label) ---------- */
+.plaque {
+  background: linear-gradient(180deg, #f5f1e8 0%, #ece5d3 100%);
+  color: #2a2419; border-radius: 6px; padding: 30px 34px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  border: 1px solid #d8cba4;
+  position: relative;
+}
+.plaque::before {
+  content: ""; position: absolute; inset: 6px;
+  border: 1px solid rgba(160,130,60,0.4); border-radius: 3px;
+  pointer-events: none;
+}
+.plaque h2 { margin: 0 0 4px; font-size: 1.9rem; color: #211c10; }
+.plaque .p-artist { color: #7a6420; font-size: 1rem; margin: 0 0 18px; font-style: italic; }
+.plaque dl { margin: 0; display: grid; grid-template-columns: 110px 1fr; gap: 8px 14px; font-size: 0.88rem; }
+.plaque dt { color: #8a7648; text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.12em; padding-top: 2px; }
+.plaque dd { margin: 0; color: #2a2419; font-weight: 500; }
+
+/* ---------- footer ---------- */
+.footer {
+  margin-top: 70px; border-top: 1px solid var(--border);
+  padding: 34px 0 26px; display: flex; flex-wrap: wrap;
+  align-items: center; justify-content: space-between; gap: 16px;
+}
+.footer .f-brand { display: flex; align-items: center; gap: 12px; }
+.footer .f-brand img { width: 34px; height: 34px; border-radius: 9px; }
+.footer .f-brand b { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; }
+.footer .f-note { color: var(--text-faint); font-size: 0.8rem; }
