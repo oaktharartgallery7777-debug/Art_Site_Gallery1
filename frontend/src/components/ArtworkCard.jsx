@@ -8,11 +8,9 @@ export function dimText(row) {
   return `${w} × ${h} ${unit}`;
 }
 
-export function soldPill(row) {
-  const sold = (row.purchase_year || "").toString().trim() !== "";
-  return sold
-    ? <span className="pill sold">Sold {row.purchase_year}</span>
-    : <span className="pill available">Available</span>;
+export function acquiredText(row) {
+  const y = (row.purchase_year || "").toString().trim();
+  return y || "—";
 }
 
 export default function ArtworkCard({ row }) {
@@ -31,9 +29,8 @@ export default function ArtworkCard({ row }) {
           <div className="m"><b>Medium</b>{row.medium || "—"}</div>
           <div className="m"><b>Size</b>{dimText(row)}</div>
           <div className="m"><b>Year</b>{row.draw_year || "—"}</div>
-          <div className="m"><b>Location</b>📍 {row.location || "—"}</div>
+          <div className="m"><b>Acquired</b>{acquiredText(row)}</div>
         </div>
-        <div style={{ marginTop: 12 }}>{soldPill(row)}</div>
       </div>
     </Link>
   );

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom";
 import { api } from "../api/client";
 import { cloudinaryThumb } from "../utils/images";
-import { dimText, soldPill } from "../components/ArtworkCard";
+import { acquiredText, dimText } from "../components/ArtworkCard";
 
 export default function ArtworkPage() {
   const { id: pathId } = useParams();
@@ -34,7 +34,7 @@ export default function ArtworkPage() {
     ["Medium", row.medium || "—"],
     ["Dimensions", dimText(row)],
     ["Year Created", row.draw_year || "—"],
-    ["Purchase Year", row.purchase_year || "—"],
+    ["Year Acquired", acquiredText(row)],
     ["Price", row.price || "—"],
     ["Location", row.location ? `📍 ${row.location}` : "—"],
   ];
@@ -52,7 +52,6 @@ export default function ArtworkPage() {
           <span className="id-badge" style={{ position: "static" }}>ID · {row.id}</span>
           <h1 style={{ marginTop: 14 }}>{row.title || "Unknown"}</h1>
           <p className="artist">by {row.artist || "Unknown Artist"}</p>
-          <div style={{ marginBottom: 22 }}>{soldPill(row)}</div>
           <dl className="kv">
             {kv.map(([k, v]) => (
               <div key={k} style={{ display: "contents" }}>

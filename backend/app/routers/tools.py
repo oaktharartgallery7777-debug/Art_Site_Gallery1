@@ -70,7 +70,7 @@ def print_labels(ids: str = Query("", description="comma-separated artwork ids; 
         pdf.cell(0, 8, f"by {row.get('artist') or 'Unknown'}", new_x="LMARGIN", new_y="NEXT")
         pdf.set_text_color(0, 0, 0)
         pdf.ln(4)
-        for label, key in (("Year", "draw_year"), ("Purchased", "purchase_year"),
+        for label, key in (("Year", "draw_year"), ("Acquired", "purchase_year"),
                            ("Price", "price"), ("Medium", "medium"), ("Location", "location")):
             pdf.set_font("Helvetica", "B", 11)
             pdf.cell(30, 7, f"{label}:")

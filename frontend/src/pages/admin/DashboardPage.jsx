@@ -31,7 +31,7 @@ export default function DashboardPage() {
     ["🎨", d.total_artworks, "Artworks"],
     ["👨‍🎨", d.total_artists, "Artists"],
     ["📍", d.total_locations, "Locations"],
-    ["💰", d.purchased_count, "Sold"],
+    ["🖌️", d.total_mediums, "Mediums"],
   ];
 
   return (

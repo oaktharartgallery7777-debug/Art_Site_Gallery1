@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { api } from "../../api/client";
 
-const FIELDS = ["title", "artist", "draw_year", "purchase_year", "price", "medium", "location", "width", "height", "unit"];
+const FIELD_LABELS = {
+  title: "Title", artist: "Artist", draw_year: "Year Created",
+  purchase_year: "Year Acquired", price: "Price", medium: "Medium",
+  location: "Location", width: "Width", height: "Height", unit: "Unit",
+};
+const FIELDS = Object.keys(FIELD_LABELS);
 
 export default function EditArtworkPage() {
   const [params] = useSearchParams();
@@ -82,7 +87,7 @@ export default function EditArtworkPage() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
               {FIELDS.map((k) => (
                 <div key={k}>
-                  <label className="f-label">{k.replace("_", " ")}</label>
+                  <label className="f-label">{FIELD_LABELS[k]}</label>
                   {k === "unit" ? (
                     <select className="input" value={form[k]} onChange={set(k)}>
                       <option value="in">in</option><option value="cm">cm</option>

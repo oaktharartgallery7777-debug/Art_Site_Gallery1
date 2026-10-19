@@ -88,7 +88,7 @@ export default function InventoryPage() {
             <div><label className="f-label">Medium</label><input className="input" value={form.medium} onChange={set("medium")} placeholder="AC" /></div>
             <div><label className="f-label">Location</label><input className="input" value={form.location} onChange={set("location")} placeholder="Home" /></div>
             <div><label className="f-label">Year Created</label><input className="input" value={form.draw_year} onChange={set("draw_year")} /></div>
-            <div><label className="f-label">Purchase Year</label><input className="input" value={form.purchase_year} onChange={set("purchase_year")} /></div>
+            <div><label className="f-label">Year Acquired</label><input className="input" value={form.purchase_year} onChange={set("purchase_year")} /></div>
             <div><label className="f-label">Price</label><input className="input" value={form.price} onChange={set("price")} /></div>
             <div><label className="f-label">Image (max 20MB)</label><input className="input" type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => setFile(e.target.files[0] || null)} /></div>
           </div>
