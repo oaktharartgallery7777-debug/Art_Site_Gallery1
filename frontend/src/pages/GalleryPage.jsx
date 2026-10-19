@@ -12,6 +12,12 @@ export default function GalleryPage() {
   const [featured, setFeatured] = useState(null);
   const [f, setF] = useState({ search: "", artist: searchParams.get("artist") || "", location: "", medium: "" });
 
+  // Keep the artist filter in sync when arriving via an artist link (e.g. /?artist=Name).
+  useEffect(() => {
+    const a = searchParams.get("artist") || "";
+    setF((prev) => (prev.artist === a ? prev : { ...prev, artist: a }));
+  }, [searchParams]);
+
   useEffect(() => {
     setData(null);
     const params = { page, per_page: 12, ...Object.fromEntries(Object.entries(f).filter(([_, v]) => v)) };
