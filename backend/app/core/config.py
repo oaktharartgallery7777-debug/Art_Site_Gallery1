@@ -27,7 +27,7 @@ class Settings:
     CLOUDINARY_API_SECRET: str = os.environ.get("CLOUDINARY_API_SECRET", "")
 
     # Single-admin auth: bcrypt hash of the admin password.
-    # Generate with: python -c "from passlib.hash import bcrypt; print(bcrypt.hash('your-password'))"
+    # Generate with: python -c "import bcrypt; print(bcrypt.hashpw(b'your-password', bcrypt.gensalt()).decode())"
     ADMIN_PASSWORD_HASH: str = os.environ.get("ADMIN_PASSWORD_HASH", "")
 
     JWT_SECRET: str = os.environ.get("JWT_SECRET", "")

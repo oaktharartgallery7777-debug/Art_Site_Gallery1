@@ -14,7 +14,7 @@ def list_activity(page: int = Query(1, ge=1), per_page: int = Query(30, ge=1, le
     sb = get_supabase()
     start = (page - 1) * per_page
     res = (sb.table("activity_logs").select("*", count="exact")
-           .order("created_at", desc=True)
+           .order("timestamp", desc=True)
            .range(start, start + per_page - 1).execute())
     total = res.count or 0
     return {

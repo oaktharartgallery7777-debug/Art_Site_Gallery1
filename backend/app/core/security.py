@@ -6,24 +6,28 @@ from datetime import datetime, timedelta, timezone
 
 import jwt
 from fastapi import Depends, HTTPException, Request, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from passlib.hash import bcrypt
+
+import bcrypt as bcrypt_lib
 
 from app.core.config import settings
 
 ALGORITHM = "HS256"
 COOKIE_NAME = "art_gallery_session"
 
-_bearer = HTTPBearer(auto_error=False)
-
 
 def verify_admin_password(plain: str) -> bool:
     if not settings.ADMIN_PASSWORD_HASH:
         return False
     try:
-        return bcrypt.verify(plain, settings.ADMIN_PASSWORD_HASH)
+        return bcrypt_lib.checkpw(
+            plain.encode("utf-8"), settings.ADMIN_PASSWORD_HASH.encode("utf-8")
+        )
     except Exception:
         return False
+
+
+def hash_password(plain: str) -> str:
+    return bcrypt_lib.hashpw(plain.encode("utf-8"), bcrypt_lib.gensalt()).decode("utf-8")
 
 
 def create_token() -> str:

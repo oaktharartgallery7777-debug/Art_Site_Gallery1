@@ -30,7 +30,7 @@ export default function ActivityPage() {
               <tbody>
                 {data.items.map((r, i) => (
                   <tr key={r.id || i}>
-                    <td style={{ whiteSpace: "nowrap" }}>{r.created_at ? new Date(r.created_at).toLocaleString() : "—"}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{r.timestamp ? new Date(r.timestamp).toLocaleString() : "—"}</td>
                     <td><span className="pill available">{r.action}</span></td>
                     <td style={{ color: "var(--gold-soft)" }}>{r.artwork_id || "—"}</td>
                     <td style={{ maxWidth: 420 }}>{r.details || "—"}</td>

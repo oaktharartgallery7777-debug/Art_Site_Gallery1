@@ -51,7 +51,7 @@ def _log(action: str, artwork_id: str, details: str = "") -> None:
             "action": action,
             "artwork_id": artwork_id,
             "details": details,
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }).execute()
     except Exception:
         pass
