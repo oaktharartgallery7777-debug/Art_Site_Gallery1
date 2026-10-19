@@ -1,44 +1,32 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { api } from "../api/client";
 import { cloudinaryThumb } from "../utils/images";
 import ArtworkCard from "../components/ArtworkCard";
 
 export default function GalleryPage() {
+  const [searchParams] = useSearchParams();
   const [data, setData] = useState(null);
   const [opts, setOpts] = useState({ artists: [], locations: [], mediums: [] });
-  const [search, setSearch] = useState("");
-  const [artist, setArtist] = useState("");
-  const [location, setLocation] = useState("");
-  const [medium, setMedium] = useState("");
   const [page, setPage] = useState(1);
-  const [stats, setStats] = useState(null);
   const [featured, setFeatured] = useState(null);
+  const [f, setF] = useState({ search: "", artist: searchParams.get("artist") || "", location: "", medium: "" });
+
+  useEffect(() => {
+    setData(null);
+    const params = { page, per_page: 12, ...Object.fromEntries(Object.entries(f).filter(([_, v]) => v)) };
+    api.paintings(params).then(setData).catch(() => setData({ items: [], total: 0, pages: 0 }));
+  }, [page, f]);
 
   useEffect(() => {
     api.filterOptions().then(setOpts).catch(() => {});
-    // Featured artwork for the hero banner (a piece with an image).
     api.paintings({ page: 1, per_page: 20 }).then((d) => {
       const withImg = (d.items || []).find((r) => r.image_url);
       if (withImg) setFeatured(withImg);
     }).catch(() => {});
   }, []);
 
-  useEffect(() => {
-    setData(null);
-    api.paintings({ page, search: search.trim(), artist, location, medium })
-      .then((d) => {
-        setData(d);
-        if (!stats) {
-          setStats({ total: d.total });
-        }
-      })
-      .catch(() => setData({ items: [], total: 0, total_pages: 1 }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, search, artist, location, medium]);
-
-  function reset() {
-    setSearch(""); setArtist(""); setLocation(""); setMedium(""); setPage(1);
-  }
+  const totalPages = data?.pages || 0;
 
   return (
     <>
@@ -48,11 +36,12 @@ export default function GalleryPage() {
         </div>
         <div className="hero-shade" />
         <div className="hero-content">
-          <span className="hero-eyebrow">Private Collection</span>
-          <h1>ABC Art Gallery</h1>
+          <span className="eyebrow">Private Collection</span>
+          <h1>The Collection</h1>
           <p>
-            A curated collection of Myanmar fine art — {opts.artists.length > 0 ? `${opts.artists.length} artists` : "dozens of artists"} and{" "}
-            {data ? `${data.total} works` : "hundreds of works"}, preserved and catalogued in one place.
+            {opts.artists.length > 0 ? `${opts.artists.length} artists` : "Dozens of artists"} ·{" "}
+            {data ? `${data.total} works` : "hundreds of works"} — Myanmar fine art,
+            preserved and catalogued in one place.
           </p>
           <div className="hero-stats">
             <div className="hs"><b>{data ? data.total : "—"}</b><span>Artworks</span></div>
@@ -62,57 +51,63 @@ export default function GalleryPage() {
         </div>
       </div>
 
-      <div className="page-head">
-        <h1 style={{ fontSize: "1.9rem" }}>Browse the Collection</h1>
-        <div className="gold-rule" />
-      </div>
-
       <div className="filter-bar">
-        <div className="fg" style={{ flex: "2 1 220px" }}>
+        <div className="fg">
           <label className="f-label">Search</label>
-          <input className="input" placeholder="Title, artist or ID…" value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }} />
+          <input className="input" placeholder="Title, artist, or ID…" value={f.search}
+            onChange={(e) => { setPage(1); setF({ ...f, search: e.target.value }); }} />
         </div>
         <div className="fg">
           <label className="f-label">Artist</label>
-          <select className="input" value={artist} onChange={(e) => { setArtist(e.target.value); setPage(1); }}>
+          <select className="input" value={f.artist}
+            onChange={(e) => { setPage(1); setF({ ...f, artist: e.target.value }); }}>
             <option value="">All artists</option>
             {opts.artists.map((a) => <option key={a} value={a}>{a}</option>)}
           </select>
         </div>
         <div className="fg">
-          <label className="f-label">Location</label>
-          <select className="input" value={location} onChange={(e) => { setLocation(e.target.value); setPage(1); }}>
-            <option value="">All locations</option>
-            {opts.locations.map((l) => <option key={l} value={l}>{l}</option>)}
-          </select>
-        </div>
-        <div className="fg">
           <label className="f-label">Medium</label>
-          <select className="input" value={medium} onChange={(e) => { setMedium(e.target.value); setPage(1); }}>
+          <select className="input" value={f.medium}
+            onChange={(e) => { setPage(1); setF({ ...f, medium: e.target.value }); }}>
             <option value="">All mediums</option>
             {opts.mediums.map((m) => <option key={m} value={m}>{m}</option>)}
           </select>
         </div>
-        <div className="fg" style={{ flex: "0 0 auto", display: "flex", alignItems: "flex-end" }}>
-          <button className="btn btn-ghost" onClick={reset}>Reset</button>
+        <div className="fg">
+          <label className="f-label">Location</label>
+          <select className="input" value={f.location}
+            onChange={(e) => { setPage(1); setF({ ...f, location: e.target.value }); }}>
+            <option value="">All locations</option>
+            {opts.locations.map((l) => <option key={l} value={l}>{l}</option>)}
+          </select>
+        </div>
+        <div>
+          <button className="btn btn-outline btn-sm" style={{ marginTop: 22 }}
+            onClick={() => { setPage(1); setF({ search: "", artist: "", location: "", medium: "" }); }}>
+            Reset
+          </button>
         </div>
       </div>
 
       {!data ? (
         <div className="spinner" />
       ) : data.items.length === 0 ? (
-        <div className="empty"><div className="big">🖼️</div><p>No artworks match your filters.</p></div>
+        <div className="empty">
+          <div className="big">🖼️</div>
+          <p>No artworks match your filters.</p>
+        </div>
       ) : (
         <>
           <div className="art-grid">
-            {data.items.map((row) => <ArtworkCard key={row.id} row={row} />)}
+            {data.items.map((r) => <ArtworkCard key={r.id} row={r} />)}
           </div>
-          <div className="pagination">
-            <button className="btn btn-ghost" disabled={page <= 1} onClick={() => setPage(page - 1)}>← Prev</button>
-            <span className="info">Showing {data.items.length} of {data.total} · Page {page} / {data.total_pages}</span>
-            <button className="btn btn-ghost" disabled={page >= data.total_pages} onClick={() => setPage(page + 1)}>Next →</button>
-          </div>
+          {totalPages > 1 && (
+            <div className="pagination">
+              <button className="btn btn-outline btn-sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>← Prev</button>
+              <span className="info">Page {page} of {totalPages}</span>
+              <button className="btn btn-outline btn-sm" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>Next →</button>
+            </div>
+          )}
         </>
       )}
     </>

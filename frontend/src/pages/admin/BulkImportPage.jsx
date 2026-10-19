@@ -44,7 +44,7 @@ export default function BulkImportPage() {
         <p style={{ color: "var(--text-dim)", fontSize: "0.9rem" }}>
           Rows with an ID that already exists are <b>skipped</b>, never overwritten.
         </p>
-        <button className="btn btn-ghost" onClick={() => api.importTemplate()}>
+        <button className="btn btn-outline" onClick={() => api.importTemplate()}>
           ⬇ Download CSV Template
         </button>
       </div>

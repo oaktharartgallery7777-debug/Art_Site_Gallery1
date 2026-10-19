@@ -4,6 +4,8 @@ import Layout from "./components/Layout";
 import RequireAdmin from "./components/RequireAdmin";
 import GalleryPage from "./pages/GalleryPage";
 import ArtworkPage from "./pages/ArtworkPage";
+import ArtistsPage from "./pages/ArtistsPage";
+import AboutPage from "./pages/AboutPage";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/admin/DashboardPage";
 import InventoryPage from "./pages/admin/InventoryPage";
@@ -26,6 +28,8 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<GalleryPage />} />
                 <Route path="/art/:id" element={<ArtworkPage />} />
+                <Route path="/artists" element={<ArtistsPage />} />
+                <Route path="/about" element={<AboutPage />} />
                 <Route path="/admin" element={<RequireAdmin><DashboardPage /></RequireAdmin>} />
                 <Route path="/admin/inventory" element={<RequireAdmin><InventoryPage /></RequireAdmin>} />
                 <Route path="/admin/edit" element={<RequireAdmin><EditArtworkPage /></RequireAdmin>} />

@@ -69,7 +69,7 @@ export default function BatchLocationPage() {
         <div className="fg" style={{ flex: "1 1 260px" }}>
           <input className="input" placeholder="Search ID, title, artist…" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
-        <button className="btn btn-ghost" type="submit">Search</button>
+        <button className="btn btn-outline" type="submit">Search</button>
       </form>
 
       {!data ? <div className="spinner" /> : (
@@ -91,9 +91,9 @@ export default function BatchLocationPage() {
             </table>
           </div>
           <div className="pagination">
-            <button className="btn btn-ghost" disabled={page <= 1} onClick={() => setPage(page - 1)}>← Prev</button>
+            <button className="btn btn-outline" disabled={page <= 1} onClick={() => setPage(page - 1)}>← Prev</button>
             <span className="info">Page {page} / {data.total_pages}</span>
-            <button className="btn btn-ghost" disabled={page >= data.total_pages} onClick={() => setPage(page + 1)}>Next →</button>
+            <button className="btn btn-outline" disabled={page >= data.total_pages} onClick={() => setPage(page + 1)}>Next →</button>
           </div>
         </>
       )}

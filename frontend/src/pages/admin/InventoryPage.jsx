@@ -100,7 +100,7 @@ export default function InventoryPage() {
         <div className="fg" style={{ flex: "1 1 260px" }}>
           <input className="input" placeholder="Search ID, title, artist…" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
-        <button className="btn btn-ghost" type="submit">Search</button>
+        <button className="btn btn-outline" type="submit">Search</button>
       </form>
 
       {!data ? <div className="spinner" /> : (
@@ -118,8 +118,8 @@ export default function InventoryPage() {
                     <td>{r.width} × {r.height} {r.unit}</td>
                     <td>{r.location || "—"}</td>
                     <td style={{ whiteSpace: "nowrap" }}>
-                      <Link to={`/art/${encodeURIComponent(r.id)}`} className="btn btn-ghost" style={{ padding: "6px 12px", fontSize: "0.76rem", marginRight: 8 }}>View</Link>
-                      <Link to={`/admin/edit?id=${encodeURIComponent(r.id)}`} className="btn btn-ghost" style={{ padding: "6px 12px", fontSize: "0.76rem", marginRight: 8 }}>Edit</Link>
+                      <Link to={`/art/${encodeURIComponent(r.id)}`} className="btn btn-outline" style={{ padding: "6px 12px", fontSize: "0.76rem", marginRight: 8 }}>View</Link>
+                      <Link to={`/admin/edit?id=${encodeURIComponent(r.id)}`} className="btn btn-outline" style={{ padding: "6px 12px", fontSize: "0.76rem", marginRight: 8 }}>Edit</Link>
                       <button className="btn btn-danger" style={{ padding: "6px 12px", fontSize: "0.76rem" }} onClick={() => remove(r.id)}>Delete</button>
                     </td>
                   </tr>
@@ -128,9 +128,9 @@ export default function InventoryPage() {
             </table>
           </div>
           <div className="pagination">
-            <button className="btn btn-ghost" disabled={page <= 1} onClick={() => { setPage(page - 1); }}>← Prev</button>
+            <button className="btn btn-outline" disabled={page <= 1} onClick={() => { setPage(page - 1); }}>← Prev</button>
             <span className="info">Page {page} / {data.total_pages} · {data.total} total</span>
-            <button className="btn btn-ghost" disabled={page >= data.total_pages} onClick={() => { setPage(page + 1); }}>Next →</button>
+            <button className="btn btn-outline" disabled={page >= data.total_pages} onClick={() => { setPage(page + 1); }}>Next →</button>
           </div>
         </>
       )}

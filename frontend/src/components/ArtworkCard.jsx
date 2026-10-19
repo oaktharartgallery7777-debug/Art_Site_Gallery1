@@ -2,10 +2,11 @@ import { Link } from "react-router-dom";
 import { cloudinaryThumb } from "../utils/images";
 
 export function dimText(row) {
-  const w = row.width ?? "—";
-  const h = row.height ?? "—";
-  const unit = row.unit || "in";
-  return `${w} × ${h} ${unit}`;
+  const w = (row.width || "").toString().trim();
+  const h = (row.height || "").toString().trim();
+  const u = (row.unit || "").toString().trim();
+  if (!w && !h) return "";
+  return `${w}${w && h ? " × " : ""}${h}${u ? " " + u : ""}`;
 }
 
 export function acquiredText(row) {
@@ -14,24 +15,17 @@ export function acquiredText(row) {
 }
 
 export default function ArtworkCard({ row }) {
+  const meta = [row.draw_year, row.medium].filter(Boolean).join(" · ");
   return (
-    <Link to={`/art/${encodeURIComponent(row.id)}`} className="art-card">
+    <Link to={`/art/${encodeURIComponent(row.id)}`} className="art-cell">
       <div className="img-wrap">
         {row.image_url
           ? <img src={cloudinaryThumb(row.image_url, 600)} alt={row.title || row.id} loading="lazy" />
-          : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "3rem" }}>🖼️</div>}
-        <span className="id-badge">ID · {row.id}</span>
+          : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "3rem", color: "#d8d4cb" }}>🖼️</div>}
       </div>
-      <div className="body">
-        <h3 className="title">{row.title || "Unknown"}</h3>
-        <p className="artist">{row.artist || "Unknown Artist"}</p>
-        <div className="meta-grid">
-          <div className="m"><b>Medium</b>{row.medium || "—"}</div>
-          <div className="m"><b>Size</b>{dimText(row)}</div>
-          <div className="m"><b>Year</b>{row.draw_year || "—"}</div>
-          <div className="m"><b>Acquired</b>{acquiredText(row)}</div>
-        </div>
-      </div>
+      <h3 className="a-title">{row.title || "Untitled"}</h3>
+      <p className="a-artist">{row.artist || "Unknown Artist"}</p>
+      {meta && <p className="a-meta">{meta}</p>}
     </Link>
   );
 }

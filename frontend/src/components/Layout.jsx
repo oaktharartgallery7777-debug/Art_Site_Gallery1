@@ -1,90 +1,85 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-const PUBLIC_LINKS = [{ to: "/", label: "Gallery", ico: "🖼️" }];
-
-const ADMIN_LINKS = [
-  { to: "/admin", label: "Dashboard", ico: "📊" },
-  { to: "/admin/inventory", label: "Inventory", ico: "🎨" },
-  { to: "/admin/edit", label: "Edit Artwork", ico: "⚙️" },
-  { to: "/admin/import", label: "Bulk Import", ico: "📥" },
-  { to: "/admin/qr", label: "QR Generator", ico: "🔳" },
-  { to: "/admin/labels", label: "Print Labels", ico: "🖨️" },
-  { to: "/admin/batch-location", label: "Batch Location", ico: "🔁" },
-  { to: "/admin/replace-image", label: "Replace Image", ico: "🖼️" },
-  { to: "/admin/activity", label: "Activity Log", ico: "📋" },
+const ADMIN_TABS = [
+  ["Dashboard", "/admin"],
+  ["Inventory", "/admin/inventory"],
+  ["Edit", "/admin/edit"],
+  ["Import", "/admin/import"],
+  ["QR Codes", "/admin/qr"],
+  ["Labels", "/admin/labels"],
+  ["Activity", "/admin/activity"],
+  ["Locations", "/admin/batch-location"],
+  ["Replace Image", "/admin/replace-image"],
 ];
 
 export default function Layout({ children }) {
   const { admin, logout } = useAuth();
+  const isAdmin = !!admin;
+  const loc = useLocation();
   const navigate = useNavigate();
-
-  async function handleLogout() {
-    await logout();
-    navigate("/");
-  }
+  const inAdmin = loc.pathname.startsWith("/admin") && loc.pathname !== "/admin/login";
 
   return (
-    <div className="shell">
-      <aside className="sidebar">
-        <Link to="/" style={{ textDecoration: "none" }}>
-          <div className="brand">
-            <img src="/logo.webp" alt="ABC Art Gallery" style={{ width: 44, height: 44, borderRadius: 12 }} />
-            <div>
-              <h2>ABC Art Gallery</h2>
-              <p>Art Collection</p>
+    <>
+      <header className="topnav">
+        <div className="topnav-inner">
+          <NavLink to="/" className="brand-link">
+            <img src="/logo.webp" alt="ABC Art Gallery" />
+            <div className="bt">
+              <b>ABC Art Gallery</b>
+              <span>Private Collection</span>
             </div>
-          </div>
-        </Link>
-
-        <div className="nav-label">Explore</div>
-        {PUBLIC_LINKS.map((l) => (
-          <NavLink key={l.to} to={l.to} end className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>
-            <span className="ico">{l.ico}</span> {l.label}
           </NavLink>
-        ))}
-
-        <div className="nav-label">Administration</div>
-        {admin ? (
-          <>
-            {ADMIN_LINKS.map((l) => (
-              <NavLink key={l.to} to={l.to} end={l.to === "/admin"} className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>
-                <span className="ico">{l.ico}</span> {l.label}
+          <nav className="nav-links">
+            <NavLink to="/" end className={({ isActive }) => "nav-link keep" + (isActive ? " active" : "")}>Gallery</NavLink>
+            <NavLink to="/artists" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>Artists</NavLink>
+            <NavLink to="/about" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>About</NavLink>
+            {isAdmin ? (
+              <NavLink to="/admin" className={({ isActive }) => "nav-link" + (isActive || inAdmin ? " active" : "")}>Admin</NavLink>
+            ) : (
+              <NavLink to="/admin/login" className="nav-link nav-cta">Sign In</NavLink>
+            )}
+          </nav>
+        </div>
+      </header>
+      <div className="page">
+        {inAdmin && isAdmin && (
+          <div className="admin-tabs">
+            {ADMIN_TABS.map(([label, to]) => (
+              <NavLink key={to} to={to} end={to === "/admin"}
+                className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>
+                {label}
               </NavLink>
             ))}
-            <button onClick={handleLogout} className="nav-link" style={{ width: "100%", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", fontSize: "0.9rem", fontWeight: 500 }}>
-              <span className="ico">🚪</span> Logout
+            <button className="nav-link" style={{ border: "none", background: "none", cursor: "pointer", font: "inherit" }}
+              onClick={() => { logout(); navigate("/"); }}>
+              Log out
             </button>
-          </>
-        ) : (
-          <NavLink to="/admin/login" className={({ isActive }) => "nav-link" + (isActive ? " active" : "")}>
-            <span className="ico">🔐</span> Admin Login
-          </NavLink>
+          </div>
         )}
-      </aside>
-
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div className="mobile-topbar">
-          <Link to="/" style={{ textDecoration: "none", fontWeight: 700 }}>🎨 ABC Art Gallery</Link>
-          {admin ? (
-            <button onClick={handleLogout} className="btn btn-ghost" style={{ padding: "7px 14px", fontSize: "0.78rem" }}>Logout</button>
-          ) : (
-            <Link to="/admin/login" className="btn btn-ghost" style={{ padding: "7px 14px", fontSize: "0.78rem" }}>Login</Link>
-          )}
-        </div>
-        <main className="main">
-          {children}
-          <footer className="footer">
-            <div className="f-brand">
+        {children}
+        <footer className="footer">
+          <div className="footer-inner">
+            <NavLink to="/" className="f-brand">
               <img src="/logo.webp" alt="ABC Art Gallery" />
-              <b>ABC Art Gallery</b>
+              <div>
+                <b>ABC Art Gallery</b>
+                <span>Private Collection</span>
+              </div>
+            </NavLink>
+            <div className="f-links">
+              <NavLink to="/">Gallery</NavLink>
+              <NavLink to="/artists">Artists</NavLink>
+              <NavLink to="/about">About</NavLink>
             </div>
-            <div className="f-note">
-              A private collection of Myanmar fine art · © {new Date().getFullYear()} ABC Art Gallery
-            </div>
-          </footer>
-        </main>
+          </div>
+          <div className="f-bottom">
+            <span>A private collection of Myanmar fine art.</span>
+            <span>© {new Date().getFullYear()} ABC Art Gallery</span>
+          </div>
+        </footer>
       </div>
-    </div>
+    </>
   );
 }

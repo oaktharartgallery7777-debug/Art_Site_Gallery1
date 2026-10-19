@@ -46,7 +46,7 @@ export default function LabelsPage() {
         <div className="fg" style={{ flex: "1 1 260px" }}>
           <input className="input" placeholder="Search ID, title, artist…" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
-        <button className="btn btn-ghost" type="submit">Search</button>
+        <button className="btn btn-outline" type="submit">Search</button>
         <div className="fg" style={{ flex: "0 0 auto", display: "flex", alignItems: "flex-end" }}>
           <button type="button" className="btn btn-gold" disabled={selected.size === 0 || busy} onClick={download}>
             🖨️ {busy ? "Generating…" : `Labels PDF (${selected.size})`}
@@ -73,9 +73,9 @@ export default function LabelsPage() {
             </table>
           </div>
           <div className="pagination">
-            <button className="btn btn-ghost" disabled={page <= 1} onClick={() => setPage(page - 1)}>← Prev</button>
+            <button className="btn btn-outline" disabled={page <= 1} onClick={() => setPage(page - 1)}>← Prev</button>
             <span className="info">Page {page} / {data.total_pages}</span>
-            <button className="btn btn-ghost" disabled={page >= data.total_pages} onClick={() => setPage(page + 1)}>Next →</button>
+            <button className="btn btn-outline" disabled={page >= data.total_pages} onClick={() => setPage(page + 1)}>Next →</button>
           </div>
         </>
       )}

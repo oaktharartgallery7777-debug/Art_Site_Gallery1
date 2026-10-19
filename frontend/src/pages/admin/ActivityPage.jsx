@@ -40,9 +40,9 @@ export default function ActivityPage() {
             </table>
           </div>
           <div className="pagination">
-            <button className="btn btn-ghost" disabled={page <= 1} onClick={() => setPage(page - 1)}>← Prev</button>
+            <button className="btn btn-outline" disabled={page <= 1} onClick={() => setPage(page - 1)}>← Prev</button>
             <span className="info">Page {page} / {data.total_pages} · {data.total} total</span>
-            <button className="btn btn-ghost" disabled={page >= data.total_pages} onClick={() => setPage(page + 1)}>Next →</button>
+            <button className="btn btn-outline" disabled={page >= data.total_pages} onClick={() => setPage(page + 1)}>Next →</button>
           </div>
         </>
       )}

@@ -38,9 +38,9 @@ export default function QRPage() {
             <div className="qr-card" key={id}>
               <img src={api.qrUrl(id)} alt={`QR for ${id}`} />
               <p style={{ margin: "12px 0 10px", fontWeight: 600, color: "var(--gold-soft)" }}>{id}</p>
-              <a className="btn btn-ghost" style={{ fontSize: "0.78rem", padding: "7px 14px" }}
+              <a className="btn btn-outline" style={{ fontSize: "0.78rem", padding: "7px 14px" }}
                 href={api.qrUrl(id)} download={`qr-${id}.png`}>Download</a>
-              <button className="btn btn-ghost" style={{ fontSize: "0.78rem", padding: "7px 14px", marginLeft: 8 }}
+              <button className="btn btn-outline" style={{ fontSize: "0.78rem", padding: "7px 14px", marginLeft: 8 }}
                 onClick={() => setIds(ids.filter((x) => x !== id))}>Remove</button>
             </div>
           ))}
