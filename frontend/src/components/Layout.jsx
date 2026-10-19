@@ -29,9 +29,9 @@ export default function Layout({ children }) {
       <aside className="sidebar">
         <Link to="/" style={{ textDecoration: "none" }}>
           <div className="brand">
-            <div className="brand-mark">🎨</div>
+            <img src="/logo.webp" alt="ABC Art Gallery" style={{ width: 44, height: 44, borderRadius: 12 }} />
             <div>
-              <h2>ABC Gallery</h2>
+              <h2>ABC Art Gallery</h2>
               <p>Art Collection</p>
             </div>
           </div>
@@ -65,7 +65,7 @@ export default function Layout({ children }) {
 
       <div style={{ flex: 1, minWidth: 0 }}>
         <div className="mobile-topbar">
-          <Link to="/" style={{ textDecoration: "none", fontWeight: 700 }}>🎨 ABC Gallery</Link>
+          <Link to="/" style={{ textDecoration: "none", fontWeight: 700 }}>🎨 ABC Art Gallery</Link>
           {admin ? (
             <button onClick={handleLogout} className="btn btn-ghost" style={{ padding: "7px 14px", fontSize: "0.78rem" }}>Logout</button>
           ) : (

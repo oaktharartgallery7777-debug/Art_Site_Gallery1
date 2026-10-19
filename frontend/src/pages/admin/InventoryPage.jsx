@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../api/client";
+import { cloudinaryThumb } from "../../utils/images";
 
 const EMPTY = { id: "", title: "", artist: "", width: "", height: "", unit: "in", medium: "", location: "", draw_year: "", purchase_year: "", price: "" };
 
@@ -110,7 +111,7 @@ export default function InventoryPage() {
               <tbody>
                 {data.items.map((r) => (
                   <tr key={r.id}>
-                    <td>{r.image_url ? <img className="thumb" src={r.image_url} alt="" /> : "—"}</td>
+                    <td>{r.image_url ? <img className="thumb" src={cloudinaryThumb(r.image_url, 200)} alt="" loading="lazy" /> : "—"}</td>
                     <td style={{ color: "var(--gold-soft)", fontWeight: 600 }}>{r.id}</td>
                     <td>{r.title || "Unknown"}</td>
                     <td>{r.artist || "—"}</td>

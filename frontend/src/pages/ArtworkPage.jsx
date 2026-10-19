@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom";
 import { api } from "../api/client";
+import { cloudinaryThumb } from "../utils/images";
 import { dimText, soldPill } from "../components/ArtworkCard";
 
 export default function ArtworkPage() {
@@ -44,7 +45,7 @@ export default function ArtworkPage() {
       <div className="detail">
         <div className="detail-img">
           {row.image_url
-            ? <img src={row.image_url} alt={row.title || row.id} />
+            ? <img src={cloudinaryThumb(row.image_url, 1200)} alt={row.title || row.id} />
             : <div className="empty"><div className="big">🖼️</div></div>}
         </div>
         <div className="detail-info">

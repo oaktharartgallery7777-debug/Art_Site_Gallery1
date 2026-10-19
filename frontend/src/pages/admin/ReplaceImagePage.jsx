@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { api } from "../../api/client";
+import { cloudinaryThumb } from "../../utils/images";
 
 export default function ReplaceImagePage() {
   const [idInput, setIdInput] = useState("");
@@ -67,7 +68,7 @@ export default function ReplaceImagePage() {
             <div>
               <label className="f-label">Current image</label>
               {row.image_url
-                ? <img src={row.image_url} alt="" style={{ width: "100%", borderRadius: 12, border: "1px solid var(--border)" }} />
+                ? <img src={cloudinaryThumb(row.image_url, 600)} alt="" style={{ width: "100%", borderRadius: 12, border: "1px solid var(--border)" }} />
                 : <p style={{ color: "var(--text-faint)" }}>No image.</p>}
             </div>
             <form onSubmit={submit}>

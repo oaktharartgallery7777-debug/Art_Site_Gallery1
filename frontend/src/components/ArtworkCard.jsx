@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { cloudinaryThumb } from "../utils/images";
 
 export function dimText(row) {
   const w = row.width ?? "—";
@@ -19,7 +20,7 @@ export default function ArtworkCard({ row }) {
     <Link to={`/art/${encodeURIComponent(row.id)}`} className="art-card">
       <div className="img-wrap">
         {row.image_url
-          ? <img src={row.image_url} alt={row.title || row.id} loading="lazy" />
+          ? <img src={cloudinaryThumb(row.image_url, 600)} alt={row.title || row.id} loading="lazy" />
           : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "3rem" }}>🖼️</div>}
         <span className="id-badge">ID · {row.id}</span>
       </div>

@@ -28,7 +28,7 @@ export default function LoginPage() {
   return (
     <div className="login-wrap">
       <form className="login-card" onSubmit={submit}>
-        <div className="brand-mark" style={{ margin: "0 auto", width: 56, height: 56, fontSize: 30 }}>🔐</div>
+        <img src="/logo.webp" alt="ABC Art Gallery" style={{ width: 72, height: 72, borderRadius: 16, margin: "0 auto" }} />
         <h1>Admin Login</h1>
         <p>This section requires administrator access.</p>
         {error && <div className="alert alert-error">{error}</div>}
