@@ -6,6 +6,7 @@ import re
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, Form
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 
 from app.core.security import require_admin
@@ -169,6 +170,22 @@ def delete_artist_photo(artist_name: str):
     if old_url:
         cloudinary_service.delete_image(old_url)
     return {"ok": True}
+
+
+@router.get("/{painting_id}/image")
+def get_painting_image(painting_id: str):
+    """Public: redirect straight to the artwork's image file.
+
+    Scanning a QR code for an artwork must show just the image, not a
+    page — so QR codes encode this URL, and it bounces to the stored
+    image file. Keeping the redirect (instead of encoding the image URL
+    directly) means printed QR codes keep working even if the artwork's
+    image is replaced later.
+    """
+    res = get_supabase().table("paintings").select("image_url").eq("id", painting_id).execute()
+    if not res.data or not res.data[0].get("image_url"):
+        raise HTTPException(404, "Artwork image not found.")
+    return RedirectResponse(url=res.data[0]["image_url"], status_code=307)
 
 
 @router.get("/{painting_id}")
