@@ -23,10 +23,10 @@ REQUIRED_COLUMNS = {"id", "title", "artist", "width", "height", "unit", "medium"
 
 
 def _qr_bytes(artwork_id: str) -> tuple[bytes, str]:
-    # QR codes point at the image-only endpoint, not the gallery page:
-    # scanning one must show just the artwork's image.
+    # QR codes point at the minimal label view, not the gallery page:
+    # scanning one shows the artwork's image with its labels underneath.
     base = settings.PUBLIC_APP_URL or ""
-    path = f"/api/paintings/{artwork_id}/image"
+    path = f"/api/paintings/{artwork_id}/label"
     qr_url = f"{base}{path}" if base else path
     qr = qrcode.QRCode(version=1, box_size=10, border=4)
     qr.add_data(qr_url)

@@ -6,7 +6,7 @@ import re
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File, Form
-from fastapi.responses import RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from pydantic import BaseModel
 
 from app.core.security import require_admin
@@ -176,16 +176,77 @@ def delete_artist_photo(artist_name: str):
 def get_painting_image(painting_id: str):
     """Public: redirect straight to the artwork's image file.
 
-    Scanning a QR code for an artwork must show just the image, not a
-    page — so QR codes encode this URL, and it bounces to the stored
-    image file. Keeping the redirect (instead of encoding the image URL
-    directly) means printed QR codes keep working even if the artwork's
-    image is replaced later.
+    Kept as a plain image link. QR codes point at the label view below
+    instead, so a scan shows the image with its labels underneath.
     """
     res = get_supabase().table("paintings").select("image_url").eq("id", painting_id).execute()
     if not res.data or not res.data[0].get("image_url"):
         raise HTTPException(404, "Artwork image not found.")
     return RedirectResponse(url=res.data[0]["image_url"], status_code=307)
+
+
+@router.get("/{painting_id}/label", response_class=HTMLResponse)
+def get_painting_label(painting_id: str):
+    """Public minimal label view for QR scans: image on top, labels below.
+
+    Deliberately NOT the gallery page — no navigation, no other artworks,
+    just this artwork's image followed by the same label fields as the
+    printed labels (title, artist, year, acquired, medium, size, location,
+    price). Keeping it server-rendered means a scan works with no login
+    and no app JavaScript.
+    """
+    import html as html_lib
+
+    res = get_supabase().table("paintings").select("*").eq("id", painting_id).execute()
+    if not res.data:
+        raise HTTPException(404, "Artwork not found.")
+    row = res.data[0]
+    esc = lambda v: html_lib.escape(str(v) if v is not None else "")
+    title = esc(row.get("title") or "Unknown")
+    artist = esc(row.get("artist") or "Unknown")
+    image_url = esc(row.get("image_url") or "")
+    size = (
+        f"{row.get('width')} x {row.get('height')} {row.get('unit') or 'in'}"
+        if row.get("width") is not None and row.get("height") is not None
+        else "N/A"
+    )
+    fields = [
+        ("ID", row.get("id")),
+        ("Year", row.get("draw_year")),
+        ("Acquired", row.get("purchase_year")),
+        ("Medium", row.get("medium")),
+        ("Size", size),
+        ("Location", row.get("location")),
+        ("Price", row.get("price")),
+    ]
+    rows_html = "".join(
+        f"<tr><th>{esc(label)}</th><td>{esc(value) if value not in (None, '') else 'N/A'}</td></tr>"
+        for label, value in fields
+    )
+    img_html = (
+        f'<img src="{image_url}" alt="{title}">'
+        if image_url
+        else "<p>Image not available.</p>"
+    )
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{title}</title>
+<style>
+  body {{ margin: 0; padding: 24px 16px 40px; font-family: system-ui, sans-serif; color: #222; background: #fbfbfa; }}
+  main {{ max-width: 720px; margin: 0 auto; }}
+  img {{ display: block; max-width: 100%; height: auto; margin: 0 auto; box-shadow: 0 2px 16px rgba(0,0,0,.15); }}
+  h1 {{ font-size: 1.5rem; margin: 24px 0 4px; }}
+  .artist {{ color: #666; margin: 0 0 20px; }}
+  table {{ border-collapse: collapse; width: 100%; }}
+  th, td {{ text-align: left; padding: 7px 0; border-bottom: 1px solid #e5e5e5; vertical-align: top; }}
+  th {{ width: 110px; color: #666; font-weight: 600; }}
+</style>
+</head>
+<body><main>{img_html}<h1>{title}</h1><p class="artist">by {artist}</p><table>{rows_html}</table></main></body>
+</html>"""
 
 
 @router.get("/{painting_id}")
